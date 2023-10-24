@@ -42,7 +42,7 @@ class PrePTEL:
         
         self.author = "Contemelia"
         self.appName = "PrePTEL"
-        self.appVersion = "1.2a"
+        self.appVersion = "1.2b"
         
         if __name__ == '__main__':
             
@@ -54,7 +54,7 @@ class PrePTEL:
                 # self.askQuestions()
                 # self.showResults()
                 
-                if not input("\n\n\n\nWould you like to run the script again? [Y / N]: ").lower()[0] == 'y':
+                if not input("\n\n\n\nWould you like to return to the menu? [Y / N]: ").lower()[0] == 'y':
                     break
     
     
@@ -188,7 +188,72 @@ class PrePTEL:
     
     
     def viewQuestions(self):
-        ...
+        
+        if self.jumbled:
+            currentBank = sample(self.questionBank, self.questionCount)
+        else:
+            currentBank = self.questionBank[: self.questionCount]
+        
+        choices = ['A', 'B', 'C', 'D']
+        
+        currentPage = 1
+        
+        while True:
+            
+            self.waterMark()
+            
+            questionNumber = ((currentPage - 1) * self.qpPage) + 1
+            for index in range((currentPage - 1) * self.qpPage, (currentPage * self.qpPage)):
+                
+                if index == len(currentBank):
+                    break
+                
+                print(f"{questionNumber}. {currentBank[index][0]}")
+                choiceOption = 0
+                choiceIndices = {}
+                
+                jumbledOption = []
+                for option in range(1, 5):
+                    jumbledOption.append([currentBank[index][option], option])
+                jumbledOption = sample(jumbledOption, len(jumbledOption))
+                
+                for option in jumbledOption:
+                    if option[0]:
+                        print(f"({choices[choiceOption]}) {option[0]}")
+                        choiceIndices[choices[choiceOption]] = option[1]
+                        if currentBank[index][5] == option[0]:
+                            correctOption = choices[choiceOption]
+                        choiceOption += 1
+                
+                print(f"\nCorrect answer: ({correctOption}) {currentBank[index][5]}\n\n")
+                
+                questionNumber += 1
+            
+            print("\n\nChoose one of these to navigate between pages. [P (Previous page) / N (Next page)]")
+            nextAction = input("Press any other key to return to the menu.\n\nYour choice: ").lower()[0]
+            
+            if nextAction == 'p':
+                if currentPage == 1:
+                    print("\nYou are already on the first page.")
+                    sleep(3)
+                    continue
+                else:
+                    currentPage -= 1
+                    continue
+            
+            elif nextAction == 'n':
+                if (currentPage * self.qpPage) >= len(currentBank):
+                    print("\nYou have reached the last page.")
+                    sleep(3)
+                    continue
+                else:
+                    currentPage += 1
+                    continue
+            
+            else:
+                print()
+                return
+                    
     
     
     
